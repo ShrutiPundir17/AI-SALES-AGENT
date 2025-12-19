@@ -86,23 +86,6 @@ npm install
 
 Create a `.env` file in the project root:
 
-```env
-VITE_SUPABASE_URL=your_supabase_project_url
-VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
-```
-
-The database and edge functions are already configured in your Supabase project.
-
-### 4. Configure OpenAI (Optional)
-
-If you want to use OpenAI instead of rule-based responses:
-
-1. Go to your Supabase Dashboard
-2. Navigate to Edge Functions → Secrets
-3. Add secret: `OPENAI_API_KEY` with your OpenAI API key
-
-**Note**: The system works perfectly with rule-based responses if you don't configure OpenAI.
-
 ### 5. Run the Development Server
 
 ```bash
@@ -116,25 +99,6 @@ The application will be available at `http://localhost:5173`
 ```bash
 npm run build
 ```
-
-## Usage Guide
-
-### For End Users (Leads)
-
-1. **Enter Your Information**: Fill in the lead form with name, email, and optional details
-2. **Start Chatting**: Ask questions about pricing, features, or request demos
-3. **Use Quick Actions**: Click suggested quick actions for common questions
-4. **View Your Status**: See your engagement score and status in real-time
-
-### For Sales Representatives
-
-Monitor the dashboard to see:
-- **Lead Score**: Engagement level (0-100)
-- **Lead Status**: Hot, Warm, or Cold
-- **Intent Detection**: What the lead is asking about
-- **Next Actions**: Recommended follow-up steps
-- **Conversation History**: Full chat transcript
-
 
 ## Technology Stack
 
