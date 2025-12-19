@@ -352,3 +352,11 @@ For questions or support, please open an issue in the GitHub repository.
 ---
 
 Built with React, Supabase, and OpenAI
+
+
+<img width="1919" height="1007" alt="Screenshot 2025-12-20 005432" src="https://github.com/user-attachments/assets/ce8f5105-12b0-4097-8dc7-6c97c286c816" />
+<img width="1919" height="1014" alt="Screenshot 2025-12-20 005442" src="https://github.com/user-attachments/assets/63d85425-b6f3-4178-873d-cbb624f3cd2c" />
+<img width="1917" height="985" alt="Screenshot 2025-12-20 005528" src="https://github.com/user-attachments/assets/deb9b805-a5c7-4869-a692-36907c32df0c" />
+
+
+
