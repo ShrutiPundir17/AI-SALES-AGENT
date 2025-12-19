@@ -42,39 +42,6 @@ supabase/functions/
     └── index.ts              # Main chat API endpoint
 ```
 
-### Database Schema (PostgreSQL via Supabase)
-```sql
-leads
-├── id (uuid, PK)
-├── name (text)
-├── email (text, unique)
-├── phone (text, nullable)
-├── company (text, nullable)
-├── lead_score (integer, 0-100)
-├── lead_status (text: cold|warm|hot|converted|not_interested)
-├── last_interaction (timestamptz)
-├── total_messages (integer)
-├── created_at (timestamptz)
-└── updated_at (timestamptz)
-
-conversations
-├── id (uuid, PK)
-├── lead_id (uuid, FK → leads)
-├── message (text)
-├── sender (text: user|agent)
-├── intent (text, nullable)
-├── confidence (numeric, nullable)
-├── next_action (text, nullable)
-└── created_at (timestamptz)
-
-lead_activities
-├── id (uuid, PK)
-├── lead_id (uuid, FK → leads)
-├── activity_type (text)
-├── details (jsonb)
-└── created_at (timestamptz)
-```
-
 ## AI & Intent Detection
 
 ### Intent Detection Strategy
@@ -93,78 +60,6 @@ The system uses a **hybrid approach**:
    - Confidence scoring based on keyword matches
    - Predefined response templates
 
-### System Prompt Design
-
-```
-You are an intelligent sales agent for a SaaS product. Your goal is to:
-1. Understand customer intent and provide helpful, concise responses
-2. Be professional, friendly, and goal-oriented
-3. Guide leads toward booking demos or sharing contact information
-4. Qualify leads by understanding their needs
-
-Guidelines:
-- Keep responses under 3 sentences
-- Always end with a question or call-to-action
-- Be consultative, not pushy
-- Address the lead by name when appropriate
-```
-
-### Guardrails
-
-- Responses limited to 300 tokens
-- Temperature set to 0.7 for balanced creativity
-- Conversation context limited to last 5 messages
-- Polite, professional tone enforcement
-- Goal-oriented conversation flow
-
-## Lead Scoring Algorithm
-
-```typescript
-Base Score Calculation:
-- Pricing Inquiry: +15 points
-- Demo Request: +25 points
-- Feature Inquiry: +10 points
-- Follow-up Request: +20 points
-- Not Interested: -30 points
-- General Inquiry: +5 points
-- Message Count: +3 points per message (max +20)
-
-Lead Status Determination:
-- Hot: Score >= 70
-- Warm: Score >= 40
-- Cold: Score < 40
-- Not Interested: Override status when intent detected
-```
-
-## API Endpoints
-
-### POST /functions/v1/chat
-
-**Request:**
-```json
-{
-  "lead_id": "uuid",
-  "message": "I want to know about pricing",
-  "lead_info": {
-    "name": "John Doe",
-    "email": "john@example.com",
-    "phone": "+91 98765 43210",
-    "company": "Acme Corp"
-  }
-}
-```
-
-**Response:**
-```json
-{
-  "reply": "Hi John! Our pricing starts from ₹999/month...",
-  "intent": "pricing_inquiry",
-  "confidence": 0.87,
-  "next_action": "offer_demo",
-  "lead_score": 72,
-  "lead_status": "hot"
-}
-```
 
 ## Setup Instructions
 
@@ -240,35 +135,6 @@ Monitor the dashboard to see:
 - **Next Actions**: Recommended follow-up steps
 - **Conversation History**: Full chat transcript
 
-## Sample API Requests
-
-### Example 1: Pricing Inquiry
-
-```bash
-curl -X POST https://your-project.supabase.co/functions/v1/chat \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer YOUR_ANON_KEY" \
-  -d '{
-    "lead_id": "123e4567-e89b-12d3-a456-426614174000",
-    "message": "How much does your product cost?",
-    "lead_info": {
-      "name": "Jane Smith",
-      "email": "jane@company.com"
-    }
-  }'
-```
-
-### Example 2: Demo Request
-
-```bash
-curl -X POST https://your-project.supabase.co/functions/v1/chat \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer YOUR_ANON_KEY" \
-  -d '{
-    "lead_id": "123e4567-e89b-12d3-a456-426614174000",
-    "message": "I would like to see a demo of your product"
-  }'
-```
 
 ## Technology Stack
 
@@ -317,19 +183,6 @@ curl -X POST https://your-project.supabase.co/functions/v1/chat \
 - **A/B Testing**: Test different conversation flows
 - **Sentiment Analysis**: Detect lead emotions and adjust tone
 
-## Troubleshooting
-
-### Issue: "Missing Supabase environment variables"
-**Solution**: Ensure `.env` file contains `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY`
-
-### Issue: API responses are generic
-**Solution**: Configure OpenAI API key in Supabase Edge Function secrets for better responses
-
-### Issue: Messages not saving
-**Solution**: Check Supabase Row Level Security policies are configured correctly
-
-### Issue: Build fails
-**Solution**: Run `npm install` to ensure all dependencies are installed
 
 ## Contributing
 
