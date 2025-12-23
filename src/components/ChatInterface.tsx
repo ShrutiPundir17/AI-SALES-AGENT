@@ -1,9 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { Send, Loader2, LogOut } from 'lucide-react';
 import { supabase } from '../lib/supabase';
-import { Message, Lead, LeadInfo } from '../types';
+import { Message, LeadInfo, ChatResponse } from '../types';
 import MessageBubble from './MessageBubble';
-import LeadStats from './LeadStats';
 
 interface ChatInterfaceProps {
   leadInfo: LeadInfo;
@@ -15,7 +14,6 @@ export default function ChatInterface({ leadInfo, leadId, onLogout }: ChatInterf
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [lead, setLead] = useState<Lead | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -27,54 +25,28 @@ export default function ChatInterface({ leadInfo, leadId, onLogout }: ChatInterf
   }, [messages]);
 
   useEffect(() => {
-    loadConversation();
-  }, [leadId]);
+    // Load existing conversation history for this lead (optional but nice UX)
+    const loadConversation = async () => {
+      const { data: messagesData, error } = await supabase
+        .from('conversations')
+        .select('*')
+        .eq('lead_id', leadId)
+        .order('created_at', { ascending: true });
 
-  const loadConversation = async () => {
-    const { data: leadData } = await supabase
-      .from('leads')
-      .select('*')
-      .eq('id', leadId)
-      .maybeSingle();
+      if (error) {
+        console.error('Error loading conversation:', error);
+        return;
+      }
 
-    if (leadData) {
-      setLead(leadData);
-    }
-
-    const { data: messagesData } = await supabase
-      .from('conversations')
-      .select('*')
-      .eq('lead_id', leadId)
-      .order('created_at', { ascending: true });
-
-    if (messagesData) {
-      setMessages(messagesData);
-    }
-
-    if (!leadData || messagesData?.length === 0) {
-      sendInitialGreeting();
-    }
-  };
-
-  const sendInitialGreeting = async () => {
-    const greeting = `Hi ${leadInfo.name}! 👋 Welcome to our AI Sales Agent. I'm here to help you learn more about our product. Feel free to ask me about pricing, features, or schedule a demo!`;
-
-    const newMessage: Message = {
-      id: crypto.randomUUID(),
-      lead_id: leadId,
-      message: greeting,
-      sender: 'agent',
-      created_at: new Date().toISOString(),
+      if (messagesData) {
+        setMessages(messagesData as Message[]);
+      }
     };
 
-    setMessages([newMessage]);
-
-    await supabase.from('conversations').insert({
-      lead_id: leadId,
-      message: greeting,
-      sender: 'agent',
+    loadConversation().catch((err) => {
+      console.error('Error in loadConversation effect:', err);
     });
-  };
+  }, [leadId]);
 
   const sendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -110,32 +82,20 @@ export default function ChatInterface({ leadInfo, leadId, onLogout }: ChatInterf
       });
 
       if (!response.ok) {
-        throw new Error('Failed to send message');
+        throw new Error(`Failed to send message: ${response.status}`);
       }
 
-      const data = await response.json();
+      const data: ChatResponse = await response.json();
 
       const agentMessage: Message = {
         id: crypto.randomUUID(),
         lead_id: leadId,
         message: data.reply,
         sender: 'agent',
-        intent: data.intent,
-        confidence: data.confidence,
-        next_action: data.next_action,
         created_at: new Date().toISOString(),
       };
 
       setMessages((prev) => [...prev, agentMessage]);
-
-      if (lead) {
-        setLead({
-          ...lead,
-          lead_score: data.lead_score,
-          lead_status: data.lead_status,
-          total_messages: lead.total_messages + 1,
-        });
-      }
     } catch (error) {
       console.error('Error sending message:', error);
 
@@ -165,7 +125,7 @@ export default function ChatInterface({ leadInfo, leadId, onLogout }: ChatInterf
       <div className="bg-white border-b border-gray-200 px-6 py-4 shadow-sm">
         <div className="flex items-center justify-between max-w-6xl mx-auto">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">AI Sales Agent</h1>
+            <h1 className="text-2xl font-bold text-gray-900">Universal AI Chat</h1>
             <p className="text-sm text-gray-600">
               Chatting with {leadInfo.name}
             </p>
@@ -179,14 +139,6 @@ export default function ChatInterface({ leadInfo, leadId, onLogout }: ChatInterf
           </button>
         </div>
       </div>
-
-      {lead && (
-        <LeadStats
-          score={lead.lead_score}
-          status={lead.lead_status}
-          totalMessages={lead.total_messages}
-        />
-      )}
 
       <div className="flex-1 overflow-hidden flex flex-col max-w-6xl w-full mx-auto">
         <div className="flex-1 overflow-y-auto px-6 py-6 space-y-4">

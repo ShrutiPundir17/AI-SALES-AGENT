@@ -17,19 +17,11 @@ export interface Message {
   lead_id: string;
   message: string;
   sender: 'user' | 'agent';
-  intent?: string;
-  confidence?: number;
-  next_action?: string;
   created_at: string;
 }
 
 export interface ChatResponse {
   reply: string;
-  intent: string;
-  confidence: number;
-  next_action: string;
-  lead_score: number;
-  lead_status: string;
 }
 
 export interface LeadInfo {
