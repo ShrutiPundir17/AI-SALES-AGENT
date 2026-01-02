@@ -1,6 +1,5 @@
 # AI Sales Agent
-
-A sophisticated AI-powered sales agent that interacts with leads, understands their intent, and assists in converting them through intelligent conversations. Built with React, Supabase, and OpenAI.
+AI Sales Agent is a lightweight, production-ready frontend and serverless backend that uses an LLM-powered chat interface enhanced with Retrieval‑Augmented Generation (RAG) to qualify and capture leads, store and retrieve knowledge in Supabase, and show lead analytics. Built with Vite + React + TypeScript, it includes Supabase Functions (see index.ts) for retrieval and LLM orchestration, and migrations (migrations) to set up the knowledge base and embeddings for vector search.
 
 ## Features
 
@@ -172,8 +171,10 @@ Built with React, Supabase, and OpenAI
 
 
 <img width="1919" height="1007" alt="Screenshot 2025-12-20 005432" src="https://github.com/user-attachments/assets/ce8f5105-12b0-4097-8dc7-6c97c286c816" />
-<img width="1919" height="1014" alt="Screenshot 2025-12-20 005442" src="https://github.com/user-attachments/assets/63d85425-b6f3-4178-873d-cbb624f3cd2c" />
-<img width="1917" height="985" alt="Screenshot 2025-12-20 005528" src="https://github.com/user-attachments/assets/deb9b805-a5c7-4869-a692-36907c32df0c" />
+<img width="1309" height="720" alt="Screenshot 2025-12-23 232216" src="https://github.com/user-attachments/assets/1ae363a7-c48d-4727-995e-79abc80e8fb8" />
+<img width="1325" height="646" alt="Screenshot 2025-12-23 232254" src="https://github.com/user-attachments/assets/d0e6bc15-67e5-4cad-8ee4-1fc89e703499" />
+
+
 
 
 
